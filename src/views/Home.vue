@@ -10,7 +10,7 @@
   
         <div class="abajo">
             
-                <button class= button @click="handleClick">SOS</button>
+                <button class= button @click="botonsos">SOS</button>
 
             <div class="card">
                 <h1 class="subtitle">Ubicaciones Guardadas</h1>
@@ -92,121 +92,18 @@ export default {
         };
     },
     methods: {
+      botonsos() {
+      // Utiliza this.$router.push para ir a la ruta deseada
+      this.$router.push("/sos");
+    },
       dondevasred() {
       // Utiliza this.$router.push para ir a la ruta deseada
       console.log("holi")
       this.$router.push("/dondevas");
     },
-      navegarATareaDetalle(tarea) {
-        this.$router.push({ name: 'TareaDetalle', params: { id: tarea.idtarea,  } });
-    },
-      formatDateTime(datetime) {
-            // Formatear la fecha y la hora según tu formato deseado
-            const formattedDate = format(new Date(datetime), 'MMMM dd'); // Formato del mes y día
-            const formattedTime = format(new Date(datetime), 'HH:mm'); // Formato de la hora
-            console.log('MMMM dd', formattedDate)
-            console.log('MMMM dd', formattedTime)
-            return `${formattedDate} / ${formattedTime}`; // Concatenar la fecha y la hora
-        },
-        async reloadFunction() {
-    try {
-        const response = await this.storeTareas.getTareasEstado();
-        console.log('Respuesta de la API:', response);
-
-        // Verificar si la respuesta es un arreglo
-        if (Array.isArray(response)) {
-            // Actualizar las tareas según su estado
-            this.tareasPendientes = response.filter(data => data.c === 'Nueva');
-            this.tareasEnProgreso = response.filter(data => data.c === 'En Progreso');
-            this.tareasCompletadas = response.filter(data => data.c === 'Completada');
-            this.tareasIncompletas = response.filter(data => data.c === 'Incompletas');
-
-            // Verificar si alguna tarea ha pasado y mostrar en consola
-            this.tareasPendientes.forEach(async data => {
-                const tareaDate = new Date(data.a); // Obtener la fecha y hora de la tarea
-                const now = new Date(); // Obtener la fecha y hora actual
-                if (tareaDate < now) { // Comparar si la tarea ha pasado
-                    console.log(`La tarea ${data.f} ha pasado de tiempo.`);
-        
-                    this.nuevoObjetoTarea.idtarea=data.idtarea;
-                    this.nuevoObjetoTarea.nombre=data.f;       
-                    this.nuevoObjetoTarea.fechahoraingreso = data.name;
-                    this.nuevoObjetoTarea.fechahoratarea = data.a;
-                    this.nuevoObjetoTarea.descripcion=data.descripcion;
-                    this.nuevoObjetoTarea.categoriasIdcategorias.idcategorias=data.e;
-                    this.nuevoObjetoTarea.estadoIdestado.idestado=4;
-                    this.nuevoObjetoTarea.usuarioIdusuario.idusuario=Cookies.get('id');
-
-
-                    console.log('tarea mostrar cambios: ',this.nuevoObjetoTarea);
-                try {
-                  const response = await this.storeTareas.putTarea(this.nuevoObjetoTarea);
-                  this.storeTareas.needReload=true;
-
-              
-              } catch (error) {
-                console.error("Error al guardar:", error);
-              } 
-
-                
-                  }
-            });
-
-            // Actualizar el estado needReload
-            this.storeTareas.needReload = false;
-
-            console.log('Tareas pendientes:', this.tareasPendientes);
-            console.log('Tareas en progreso:', this.tareasEnProgreso);
-            console.log('Tareas completadas:', this.tareasCompletadas);
-            console.log('Tareas incompletas:', this.tareasIncompletas);
-        } else {
-            console.error('La respuesta de la API no es un arreglo válido:', response);
-        }
-    } catch (error) {
-        console.error('Error al cargar las tareas:', error);
-    }
-},
-
-        
-    },
-    setup() {
-        const storeTareas = useTareasStore();
-        return { storeTareas };
-      },
-      async mounted() {
-     // Llama a reloadFunction al montar el componente
-     this.reloadFunction();
-
-// Establece un intervalo para volver a cargar las tareas si es necesario
-this.intervalId = setInterval(() => {
-    if (this.storeTareas.needReload) {
-        this.reloadFunction();
-    }
-}, 1000);
-},
-beforeUnmount() {
-// Limpia el intervalo antes de desmontar el componente
-clearInterval(this.intervalId);
-},
-
-computed: {
-    // Calcula la cantidad de tareas pendientes
-    cantidadTareasPendientes() {
-        return this.tareasPendientes.length;
-    },
-    // Calcula la cantidad de tareas en progreso
-    cantidadTareasEnProgreso() {
-        return this.tareasEnProgreso.length;
-    },
-    // Calcula la cantidad de tareas completadas
-    cantidadTareasCompletadas() {
-        return this.tareasCompletadas.length;
-    },
-    cantidadTareasIncompletas() {
-        return this.tareasIncompletas.length;
-    },
-},
-};
+    
+  }
+}
 </script>
 
   
