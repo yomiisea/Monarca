@@ -10,6 +10,9 @@ import PaginaPendientes from '@/views/PaginaPendientes.vue'
 import PaginaCategorias from '@/views/PaginaCategorias.vue'
 import TareaDetalle from '@/views/TareaDetalle.vue'
 import mapa from '@/views/mapa.vue'
+import sos from '@/views/sos.vue'
+
+import dondevas from '@/views/dondevas.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -22,6 +25,11 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/sos',
+      name: 'sos',
+      component: sos
     },
     {
       path: '/PaginaCalendario',
@@ -44,10 +52,16 @@ const router = createRouter({
       component: PaginaEstado
     },
     {
+      path: '/dondevas',
+      name: 'dondevas',
+      component: dondevas
+    },
+    {
       path: '/mapa',
       name: 'mapa',
       component: mapa
     },
+    
     {
       path: '/PaginaDiario',
       name: 'PaginaDiario',

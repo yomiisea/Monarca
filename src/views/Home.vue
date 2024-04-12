@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="card2">
-        <button class= button2 @click="handleClick">Viaje</button>
+        <button class= button2 @click="dondevasred">Viaje</button>
     </div>
     
             <div class="card3">
@@ -92,6 +92,11 @@ export default {
         };
     },
     methods: {
+      dondevasred() {
+      // Utiliza this.$router.push para ir a la ruta deseada
+      console.log("holi")
+      this.$router.push("/dondevas");
+    },
       navegarATareaDetalle(tarea) {
         this.$router.push({ name: 'TareaDetalle', params: { id: tarea.idtarea,  } });
     },
