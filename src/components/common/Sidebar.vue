@@ -75,7 +75,7 @@ export default {
     },
     redirectToCalendario() {
       // Redirige a la página de Calendario
-      this.$router.push('/contactos');
+      this.$router.push('/registro');
       this.closeSidebar();
     },
     redirectToDiario() {

@@ -31,33 +31,35 @@
     />
 </GMapMap>
 <div class="card">
-                <h1 class="subtitle">Como irás?</h1>
-                <div class="EmpresasDestacadas">
-                    <div class ="company-cards-container">
-                    <button class= button3  @click="handleClick">
-                        <i class="fa fa-male fa-3x"></i>
-                        <span>A pie</span>
-                    </button>
-                    <button class= button3  @click="handleClick">
-                        <i class="fa fa-car fa-3x"></i>
-                        <span>Transporte Privado</span>
-                    </button>
-                    <button class= button3  @click="handleClick">
-                        <i class="fa fa-bus fa-3x"></i>
-                        <span>Transporte Publico</span>
-                    </button>
-            </div>
-            </div>
+      <h1 class="subtitle">¿Cómo irás?</h1>
+      <div class="EmpresasDestacadas">
+        <div class="company-cards-container">
+          <button class="button3" :class="{ 'selected': selectedOption === 'A pie' }" @click="handleClick('A pie')">
+            <i class="fa fa-male fa-3x"></i>
+            <span>A pie</span>
+          </button>
+          <button class="button3" :class="{ 'selected': selectedOption === 'Transporte Privado' }" @click="handleClick('Transporte Privado')">
+            <i class="fa fa-car fa-3x"></i>
+            <span>Transporte Privado</span>
+          </button>
+          <button class="button3" :class="{ 'selected': selectedOption === 'Transporte Público' }" @click="handleClick('Transporte Público')">
+            <i class="fa fa-bus fa-3x"></i>
+            <span>Transporte Público</span>
+          </button>
         </div>
-        
-       
-           
-          </div>
+      </div>
+    </div>
           <div class="card2">
             <h1 class="subtitle2">Descripcion</h1>
         <textarea id="description" v-model="descripcion" rows="4" cols="50"></textarea>
       </div>
+      <div class="card3">
+
+
+      <button class= button2 @click="enviarRuta">OK</button>
     </div>
+    </div>
+</div>
 </template>
   
 <script>
@@ -75,8 +77,11 @@ export default {
     },
     data() {
         return {
+            descripcion: '',
+            selectedLatitude: null,
+      selectedLongitude: null,
             center: {lat: -16.4958, lng: -68.1333 },
-            
+            selectedOption: null,
       markers: [
         {
           position: {
@@ -123,6 +128,39 @@ export default {
         };
     },
     methods: {
+        async enviarRuta() {
+      try {
+        const response = await fetch('https://devel.transoft.bo/monarca/api.php/records/rutas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "users_id": window.userid,
+            "xorigen": -16.5226502, // Latitud fija
+            "yorigen": -68.11199119999999, // Longitud fija
+            "direccionorigen": this.selectedOption, // Nombre del botón seleccionado
+            "xdestino": this.selectedLatitude, // Latitud seleccionada
+            "ydestino": this.selectedLongitude, // Longitud seleccionada
+            "direcciondestino": "", // Puedes dejarlo vacío o asignar un valor según lo necesites
+            "comentario": document.getElementById('description').value // Valor del cuadro de texto descripción
+          })
+        });
+
+        if (response.ok) {
+          console.log('Ruta enviada exitosamente');
+          // Aquí puedes realizar alguna acción adicional si lo necesitas
+        } else {
+          console.error('Error al enviar la ruta:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error al enviar la ruta:', error);
+      }
+    },
+        handleClick(option) {
+      // Cambia el estado para reflejar la opción seleccionada
+      this.selectedOption = option;
+    },
         setPlace(place) {
       // Limpiar los marcadores existentes
       this.markers = [];
@@ -138,8 +176,13 @@ export default {
       // Centrar el mapa en el lugar seleccionado
       this.center = {
         lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng()
+        lng: place.geometry.location.lng(),
+        
       };
+      console.log('Latitud:', place.geometry.location.lat());
+  console.log('Longitud:', place.geometry.location.lng());
+      this.selectedLatitude = place.geometry.location.lat();
+      this.selectedLongitude = place.geometry.location.lng();
     },
       navegarATareaDetalle(tarea) {
         this.$router.push({ name: 'TareaDetalle', params: { id: tarea.idtarea,  } });
@@ -257,7 +300,10 @@ computed: {
   
 <style scoped>
 
-
+.selected {
+  background-color: #d85600; /* Color de fondo cuando está seleccionado */
+  color: black; /* Color del texto cuando está seleccionado */
+}
 
 .description-box textarea {
   width: 80%;
@@ -490,6 +536,7 @@ border-radius: 10px;
 height: 500px;
 border-radius: 10px;
 padding-left:15px ;
+padding-top: 60px;
 /*background-color: #Fff;*/}
 .card{
 height: 630px;
@@ -582,25 +629,22 @@ margin-right: 4%;
 margin-left: 78%;
 
 }
-.button3{
-    display: flex;
-    flex-direction: column; /* Dirección de la columna (icono arriba, texto abajo) */
+.button3 {
+  display: flex;
+  flex-direction: column; /* Dirección de la columna (icono arriba, texto abajo) */
   align-items: center;
-height: 10dvh;
-width: 20dvw;
-background-color: rgb(255, 255, 255);
-border-width: 2px;
-border-radius: 10px;
-padding-top: 5%;
-
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);;
-
-
+  height: 10vh;
+  width: 20vw;
+ 
+  border-width: 2px;
+  border-radius: 10px;
+  padding-top: 5%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 .button2{
-height: 7dvh;
-width: 93dvw;
-background-color: #f4a261;
+    height: 5dvh;
+width: 20dvw;
+background-color: #c9f39a;
 color: #000000;
 font-size: larger;
 border-radius: 10px;

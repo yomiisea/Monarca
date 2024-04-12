@@ -12,7 +12,7 @@ import TareaDetalle from '@/views/TareaDetalle.vue'
 import mapa from '@/views/mapa.vue'
 import sos from '@/views/sos.vue'
 import contactos from '@/views/contactos.vue'
-
+import registro from '@/views/registro.vue'
 import dondevas from '@/views/dondevas.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +32,11 @@ const router = createRouter({
       path: '/sos',
       name: 'sos',
       component: sos
+    },
+    {
+      path: '/registro',
+      name: 'registro',
+      component: registro
     },
     {
       path: '/contactos',

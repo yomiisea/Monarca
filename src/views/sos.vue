@@ -10,6 +10,12 @@
   
   <script>
   import Swal from 'sweetalert2';
+  import twilio from 'twilio';
+
+const TWILIO_ID = 'AC3676ea6cbaac373808ba4d13125a73e7';
+const TWILIO_SK = 'b8ca1d734df66471e7c9394b9f451fe3';
+
+const client = twilio(TWILIO_ID, TWILIO_SK);
   export default {
     name: 'SOSPage',
     data() {
@@ -44,6 +50,7 @@
             // Detener el temporizador cuando el tiempo llega a cero
             clearInterval(this.timerInterval);
             alert('¡Tiempo completado!');
+            enviarMensaje();
           }
         }, 1000);
       }
@@ -53,6 +60,31 @@
       clearInterval(this.timerInterval);
     }
   };
+  function enviarMensaje() {
+  // Obtener la ubicación actual del usuario (por ejemplo, utilizando la API de geolocalización del navegador)
+  navigator.geolocation.getCurrentPosition(position => {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    // Crear la URL de Google Maps con las coordenadas de latitud y longitud
+    const direccionGoogleMaps = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+    // Crear el mensaje con la ubicación de Google Maps
+    const mensaje = `Este es mi mensaje con la ubicación actual:\n${direccionGoogleMaps}`;
+
+    // Enviar el mensaje utilizando Twilio
+    client.messages
+      .create({
+        body: mensaje,
+        from: 'whatsapp:+14155238886', // Este es el número de Twilio para enviar mensajes de WhatsApp
+        to: 'whatsapp:+59173515673' // El número de WhatsApp al que deseas enviar el mensaje
+      })
+      .then(message => console.log(message.sid))
+      .catch(error => console.error('Error al enviar el mensaje:', error));
+  }, error => {
+    console.error('Error al obtener la ubicación del usuario:', error);
+  });
+}
   </script>
   
   <style scoped>

@@ -47,7 +47,7 @@ import consejo from "@/components/common/consejo.vue";
 import { useTareasStore } from '@/stores/tareasStore.js';
 import { format } from 'date-fns';
 import Cookies from 'js-cookie';
-import Swal from 'sweetalert2';
+ import Swal from 'sweetalert2';
 export default {
     name: 'Paginaestado',
     components: {
