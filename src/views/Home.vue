@@ -15,9 +15,19 @@
             <div class="card">
                 <h1 class="subtitle">Ubicaciones Guardadas</h1>
                 <div class="EmpresasDestacadas">
+                  <div class ="company-cards-container">
+                    <div class="container__button">
+                      <button class="button3" v-for="ubicacion in ubicaciones" :key="ubicacion.id">
+      <i class="fa fa-thumb-tack fa-3x"></i> <!-- Hacer el icono más grande -->
+      <div>{{ ubicacion.nombre }}</div> <!-- Colocar el nombre debajo del icono -->
+    </button>
+</div>
+                  </div>
             </div>
         </div>
+
         <div class="card2">
+          
         <button class= button2 @click="dondevasred">Viaje</button>
     </div>
     
@@ -41,6 +51,8 @@
 </template>
   
 <script>
+// Obtener el ID del usuario desde cualquier componente hijo
+
 
 import consejo2 from "@/components/common/consejo2.vue";
 import consejo from "@/components/common/consejo.vue";
@@ -48,12 +60,14 @@ import { useTareasStore } from '@/stores/tareasStore.js';
 import { format } from 'date-fns';
 import Cookies from 'js-cookie';
 export default {
+  
     name: 'Paginaestado',
     components: {
         consejo,
     },
     data() {
         return {
+          ubicaciones: [],
           needReload:false,
             listInstitution: [],
             listInternship: [],
@@ -91,6 +105,28 @@ export default {
 
         };
     },
+    created() {
+    // Realizar la solicitud GET para obtener la lista de ubicaciones por userid
+    fetch(`https://devel.transoft.bo/monarca/api.php/records/ubicaciones?filter=users_id,eq,${window.userid}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener la lista de ubicaciones');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Guardar los datos obtenidos en la variable ubicaciones
+            this.ubicaciones = data.records;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+},
+    mounted() {
+    // Acceder a $root aquí cuando el componente se ha montado completamente
+    const userId = window.userid;
+    console.log('ID del usuario:', userId);
+  },
     methods: {
       botonsos() {
       // Utiliza this.$router.push para ir a la ruta deseada
@@ -98,11 +134,16 @@ export default {
     },
       dondevasred() {
       // Utiliza this.$router.push para ir a la ruta deseada
-      console.log("holi")
+      
       this.$router.push("/dondevas");
     },
+    registraubi(){
+      
+      console.log(window.userid)
+    }
     
-  }
+  },
+
 }
 </script>
 
@@ -139,7 +180,7 @@ export default {
 }
 .container__solution__description{
   padding: 3% 7%;
-}
+}#e69500#e6410#b35f00
 .company-logo{
   height: 400px;
 }
@@ -340,7 +381,7 @@ padding-top: 1%;
 height: 60px;
 border-radius: 10px;
 
-padding-top: 8%;
+padding-top: 5%;
 align-items: center;
 /*background-color: #Fff;*/}
 
@@ -430,6 +471,34 @@ border-radius: 10px;
 font-weight: bolder;
 border: none;
 margin-left: 4%;
+margin-right: auto;
+
+}
+.button3{
+    display: flex;
+    flex-direction: column; /* Dirección de la columna (icono arriba, texto abajo) */
+  align-items: center;
+height: 10dvh;
+width: 20dvw;
+background-color:white;
+border: none;
+border-radius: 10px;
+padding-top: 5%;
+
+
+
+
+}
+.button4{
+height: 6dvh;
+width: 30dvw;
+background-color: #e4f7c2;
+color: #000000;
+font-size: larger;
+border-radius: 10px;
+font-weight: bolder;
+border: none;
+margin-left: 65%;
 margin-right: auto;
 
 }

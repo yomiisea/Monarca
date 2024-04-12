@@ -18,6 +18,7 @@
 <script>
 import Sidebar from "@/components/common/Sidebar.vue";
 import Cookies from 'js-cookie';
+import axios from 'axios';
 export default {
     name: 'App',
     components: {
@@ -27,14 +28,38 @@ export default {
     data() {
       return {
         usuarioAutenticado: true,
+        userId: 987
       };
     },
+    created() {
+    // Llamar a la función para obtener el ID del usuario al cargar la aplicación
+    // this.fetchUserId();
+  },
     methods: {
-      // Puedes definir métodos aquí
+      async fetchUserId() {
+      try {
+        // Realiza la solicitud GET para obtener el usuario por su nombre y contraseña
+        const response = await axios.get('https://devel.transoft.bo/monarca/api.php/records/users', {
+          params: {
+            filter: 'name,eq,user1',
+            filter: 'password,eq,pass1'
+          }
+        });
+
+        // Verifica si se obtuvo el ID del usuario correctamente
+        if (response.data && response.data[0] && response.data[0].id) {
+          // Almacena el ID del usuario en la instancia de Vue para que esté disponible globalmente
+          this.userId = response.data[0].id;
+        }
+      } catch (error) {
+        console.error('Error al obtener el ID del usuario:', error);
+      }
+    }
+
     },
     mounted() {
     // Verificar si el usuario está autenticado al cargar la página
-   
+   console.log("mounted",window.userid);
   },
 };
 </script>

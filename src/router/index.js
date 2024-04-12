@@ -11,6 +11,7 @@ import PaginaCategorias from '@/views/PaginaCategorias.vue'
 import TareaDetalle from '@/views/TareaDetalle.vue'
 import mapa from '@/views/mapa.vue'
 import sos from '@/views/sos.vue'
+import contactos from '@/views/contactos.vue'
 
 import dondevas from '@/views/dondevas.vue'
 const router = createRouter({
@@ -26,10 +27,16 @@ const router = createRouter({
       name: 'home',
       component: Home
     },
+    
     {
       path: '/sos',
       name: 'sos',
       component: sos
+    },
+    {
+      path: '/contactos',
+      name: 'contactos',
+      component: contactos
     },
     {
       path: '/PaginaCalendario',

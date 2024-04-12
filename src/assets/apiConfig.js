@@ -1,1 +1,1 @@
-export const RutaApi = 'https://backend-control-tareas-jhessika.serverbb.online/api/v1/';
+export const RutaApi = 'https://devel.transoft.bo/monarca/api.php/records/';

@@ -7,24 +7,47 @@
         </div>
         <button class= button @click="botonsos">SOS</button>
         <!--prueba -->
-  
+       
         <div class="abajo">
-            
-                
+          <GMapAutocomplete
+        placeholder="Coloca la Direccion"
+        @place_changed="setPlace"
+        style="width: 90%; max-width: 500px; font-size: medium;background-color: #ffdcc5; color: black"
+    >
+    </GMapAutocomplete>
+    <div class="card2">
+      <h1 class="subtitle">Nombre</h1>
+        <textarea id="description" v-model="descripcion" rows="2" cols="50"></textarea>
+      </div>
+    <button class= button2 @click="addubi">Añadir ubicación</button>
+</div>
 
-            <div class="card">
+  <div class="card">
                 
                 <div class="EmpresasDestacadas">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15301.89810418443!2d-68.13121749999999!3d-16.5021244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sbo!4v1712900395978!5m2!1ses-419!2sbo" width="600" height="800" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                  <GMapMap
+    :center="center"
+    :zoom="18"
+   
+    style="width: 300px; height: 800px;padding-left: 80%;"
+>
+    <!-- Agregar marcador -->
+    <GMapMarker
+        v-for="(marker, index) in markers"
+        :key="index"
+        :position="marker.position"
+    />
+</GMapMap>
             </div>
         </div>
-        
-        
+      
+                
 
-       
+        
            
           </div>
-    </div>
+          
+  
 </template>
   
 <script>
@@ -41,6 +64,18 @@ export default {
     },
     data() {
         return {
+          selectedLatitude: null,
+      selectedLongitude: null,
+      descripcion: '',
+          center: {lat: -16.4958, lng: -68.1333 },
+          markers: [
+        {
+          position: {
+            lat: 51.093048, lng: 6.842120
+          },
+        }
+        , // Along list of clusters
+      ],
           needReload:false,
             listInstitution: [],
             listInternship: [],
@@ -54,7 +89,7 @@ export default {
       nombre: "pipi",
       fechahoraingreso: "2024-02-19T16:00:00.000+00:00",
       fechahoratarea: "2024-02-20T19:30:00.000+00:00",
-      descripcion: "Descripción de la tarea 1",
+     
       categoriasIdcategorias: {
         idcategorias: 1,
         nombre: "",
@@ -79,11 +114,89 @@ export default {
         };
     },
     methods: {
+      setPlace(place) {
+  // Limpiar los marcadores existentes
+  this.markers = [];
+  
+  // Agregar un nuevo marcador para el lugar seleccionado
+  this.markers.push({
+    position: {
+      lat: place.geometry.location.lat(),
+      lng: place.geometry.location.lng()
+    }
+  });
+
+  // Centrar el mapa en el lugar seleccionado
+  this.center = {
+    lat: place.geometry.location.lat(),
+    lng: place.geometry.location.lng()
+  };
+
+  // Imprimir por consola los valores de latitud y longitud del marcador
+  console.log('Latitud:', place.geometry.location.lat());
+  console.log('Longitud:', place.geometry.location.lng());
+  this.selectedLatitude = place.geometry.location.lat();
+      this.selectedLongitude = place.geometry.location.lng();
+},
       botonsos() {
       // Utiliza this.$router.push para ir a la ruta deseada
       this.$router.push("/sos");
     },
-},
+    
+    // Otros métodos...
+    addubi() {
+      
+        // Obtener el texto del textarea
+        const nombre = this.descripcion;
+        console.log(this.descripcion)
+
+        // Verificar si hay al menos un marcador en el mapa
+        
+            const x = this.selectedLatitude;
+            console.log(this.selectedLatitude)
+            const y = this.selectedLongitude;
+            console.log(this.selectedLongitude)
+            // Obtener el ID de usuario desde window.userid
+            const userId = window.userid;
+            console.log(window.userid)
+            // Construir el objeto de datos para enviar al servidor
+            const data = {
+                users_id: userId,
+                x: x,
+                y: y,
+                nombre: nombre,
+                direccion: '' // Puedes agregar la dirección si la tienes disponible
+            };
+
+            // Realizar la solicitud POST a tu API
+            fetch('https://devel.transoft.bo/monarca/api.php/records/ubicaciones', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al enviar la ubicación');
+                }
+                // Limpiar el textarea después de enviar la ubicación
+                this.descripcion = '';
+                // Actualizar la interfaz o realizar alguna otra acción necesaria
+                // Por ejemplo, mostrar un mensaje de éxito
+                alert('Ubicación agregada exitosamente');
+            })
+            .catch(error => {
+                // Manejar cualquier error que ocurra durante la solicitud
+                console.error('Error:', error);
+                // Mostrar un mensaje de error al usuario
+                alert('Ocurrió un error al enviar la ubicación. Por favor, inténtalo de nuevo.');
+            });
+        } 
+    },
+
+
+    
 };
 </script>
 
@@ -323,8 +436,9 @@ padding-top: 1%;
 height: 60px;
 border-radius: 10px;
 
-padding-top: 8%;
+
 align-items: center;
+padding-left: 5%;
 /*background-color: #Fff;*/}
 
 
@@ -467,10 +581,10 @@ padding-bottom: 40%;
 
 }
 .subtitle {
-  font-size: 20px;
+  font-size: 15px;
   color: #050200;
-  margin-bottom: 20px;
-  margin-left: 9px;
+  
+  margin-left: 5px;
 }
 .title {
   font-style:unset;

@@ -75,7 +75,7 @@ export default {
     },
     redirectToCalendario() {
       // Redirige a la página de Calendario
-      this.$router.push('/dondevas');
+      this.$router.push('/contactos');
       this.closeSidebar();
     },
     redirectToDiario() {

@@ -9,7 +9,7 @@
 				<form @submit.prevent="registerUser">
 					<label for="chk" aria-hidden="true">Registrate</label>
 					<div class="pinguino">
-					<img src="https://i.postimg.cc/15CpHkD8/temp-Image-LACCGu.avif" alt="Pingüino" style="margin-top: 20px; width: 100px; height: auto;">
+					<img src="https://i.postimg.cc/zB2n1yNY/monarca-preview-rev-1.png" alt="Pingüino" style="margin-top: 20px; width: 100px; height: auto;">
 				</div><input type="text" v-model="email" name="txt" placeholder="Usuario" required="">
 					<input type="password" v-model="password" name="pswd" placeholder="Contraseña" required="">
 					<button type="submit">Registrarse</button>
@@ -19,7 +19,7 @@
 				 <form @submit.prevent="loginUser">
 					 <label for="chk" aria-hidden="true">Cuenta</label>
 					 <div class="pinguino">
-					<img src="https://i.postimg.cc/15CpHkD8/temp-Image-LACCGu.avif" alt="Pingüino" style="margin-top: 20px; width: 100px; height: auto;">
+					<img src="https://i.postimg.cc/zB2n1yNY/monarca-preview-rev-1.png" alt="Pingüino" style="margin-top: 20px; width: 100px; height: auto;">
 				</div><input type="text" v-model="EmailIngresado" name="txt" placeholder="Usuario" required="">
 				<input type="password" v-model="PasswordIngresado" name="pswd" placeholder="Contraseña" required="" :readonly="loginBlocked">
  <div v-if="loginBlocked" class="login-blocked-message">
@@ -55,136 +55,85 @@
         }
     },
     methods: {
-		async reloadFunction(){
-        const response = await this.storeTareas.getTareasEstado();
-        console.log('Todas las tareas:', response);
+		
 
-        // Filtramos las tareas según su estado
-        this.tareasPendientes = response.filter(data => data.c == 'Nueva');
-        console.log('Tareas pendientes:', this.tareasPendientes);
-
-        this.tareasEnProgreso = response.filter(data => data.c == 'En Progreso');
-        console.log('Tareas en progreso:', this.tareasEnProgreso);
-
-        this.tareasCompletadas = response.filter(data => data.c == 'Completada');
-        console.log('Tareas completadas:', this.tareasCompletadas);
-
-        this.tareasIncompletas = response.filter(data => data.c == 'Incompletas');
-        console.log('Tareas Incompletas:', this.tareasIncompletas);
-        this.storeTareas.needReload=false;
-      },
-		async registerUser2() {
-    if (this.email == '' || this.password == '') {
-        alert("Ingrese todos los campos");
-        return;
-    }
-
-    console.log('tarea a meter: ', this.nuevoObjetoTarea);
-    console.log(this.nuevaTarea);
+async registerUser() {
     try {
-        const response = await this.storeTareas.loginUser({
-            usuario: this.email,
-            contrasenia: this.password
+        const response = await axios.post('https://devel.transoft.bo/monarca/api.php/records/users', {
+            name: this.email,
+            password: this.password
         });
 
-        // Redirige a la página deseada
-        this.$router.push("/PaginaTareas");
-		this.email == ''
-		this.email == ''
-        // Recargar la página después de 2 segundos
-        setTimeout(() => {
-            location.reload();
-        }, 2000);
+        // Verificar si la respuesta es exitosa
+        if (response.status === 200) {
+            this.successMessage = 'Usuario registrado exitosamente.';
+            
+            // Redirigir a la página deseada
+            this.$router.push('/home');
+            
+            // Limpiar los campos de entrada
+            this.email = '';
+            this.password = '';
+
+            // Recargar la página después de 2 segundos
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            // Mostrar un mensaje de error si la respuesta no es exitosa
+            this.errorMessage = 'Error al registrar usuario.';
+        }
     } catch (error) {
-        console.error("Error al guardar:", error);
+        // Capturar y mostrar el error en caso de fallo en la solicitud
+        this.errorMessage = 'Error al registrar usuario: ' + error.message;
     }
 },
-        async registerUser() {
-			try {
-				const response = await axios.post('https://backend-control-tareas-jhessika.serverbb.online/api/v1/usuarios/registro', {
-					usuario: this.email,
-					contrasenia: this.password
-				});
-				this.successMessage = 'Usuario registrado exitosamente.';
-				this.$router.push('/PaginaTareas'); // Cambia '/dashboard' por la ruta deseada
-				this.authToken = null;
-            this.id = null;
-            this.nombre = null;
-			try{
-				const response = await this.storeTareas.loginUser({
-            usuario: this.email,
-            contrasenia: this.password
-				});
-			} catch (error) {
-						this.errorMessage = 'Error al registrar usuario: ' + error.message;
-					}
-           
-				// Recargar la página después de 2 segundos
-				setTimeout(() => {
-					location.reload();
-					this.usuarioAutenticado = !!Cookies.get('authToken');
-				}, 2000);
-			} catch (error) {
-				this.errorMessage = 'Error al registrar usuario: ' + error.message;
-			}
-		},
-		async loginUser() {
-    const credentials = {
-      usuario: this.EmailIngresado,
-      clave: this.PasswordIngresado
-    };
+async loginUser() {
+    const apiUrl = 'https://devel.transoft.bo/monarca/api.php/records/users';
 
-    const store = useLoginStore();
-    const response = await store.loginUser(credentials);
+    // Construir los parámetros de filtro para el nombre de usuario y la contraseña
+    const filters = [
+        'filter=name,eq,' + this.EmailIngresado,
+        'filter=password,eq,' + this.PasswordIngresado
+    ];
+    const query = filters.join('&');
 
-    if (response.code == '200') {
-      this.$router.push("/PaginaTareas");
-	  this.PasswordIngresado='';
-	  this.EmailIngresadoo='';
-      // Recargar la página después de 2 segundos
-      setTimeout(() => {
-        location.reload();
-      }, 500);
-    } else {
-      this.loginAttempts++;
-	  this.PasswordIngresado='';
-      if (this.loginAttempts >= 3) {
-        this.loginBlocked = true;
-        setTimeout(() => {
-          this.loginAttempts = 0;
-          this.loginBlocked = false;
-        }, 30000); // 30 segundos
-      }
+    // Construir la URL completa para la solicitud de login
+    const loginUrl = apiUrl + '?' + query;
 
-      // Mostrar el tiempo restante antes de poder intentar iniciar sesión nuevamente
-      if (this.loginBlocked) {
-        this.remainingTime =30; // Inicialmente establecido en 30 segundos
-
-        // Actualizar el contador cada segundo
-        const intervalId = setInterval(() => {
-          if (this.remainingTime > 0) {
-            this.remainingTime--; // Disminuir el tiempo restante en 1 segundo
-          } else {
-			this.PasswordIngresado='';
-			this.loginBlocked = false;
-            clearInterval(intervalId); // Detener el contador cuando el tiempo restante llega a cero
-          }
-        }, 1000);
-      }
-	  
-
-      alert("Usuario o contraseña incorrectos");
-    }
-  }
-
-  }, async mounted() {
-    // Obtenemos todas las tareas
-    setInterval(() => {
-        if (this.storeTareas.needReload) {
-          this.reloadFunction();
+    try {
+        // Realizar la solicitud GET para verificar el usuario y la contraseña
+        const response = await axios.get(loginUrl);
+		console.log(response);
+        // Verificar si se encontró un usuario que coincida con los datos proporcionados
+        if (response.data.records.length > 0) {
+            // Usuario autenticado correctamente
+        	
+            this.PasswordIngresado = '';
+            this.EmailIngresado = '';
+			console.log(response.data.records[0].id);
+			console.log(window.userid);
+			window.userid=response.data.records[0].id;
+			console.log(window.userid);
+	            // Recargar la página después de 2 segundos
+            setTimeout(() => {
+                // location.reload();
+            }, 1000);
+			alert("salida");
+			this.$router.push("/home");
+        } else {
+            // Usuario o contraseña incorrectos
+            alert("Usuario o contraseña incorrectos");
         }
-      }, 1000);}
+    } catch (error) {
+        // Capturar y mostrar el error en caso de fallo en la solicitud
+        console.error('Error al realizar la solicitud de login:', error);
+        alert("Error al iniciar sesión");
+    }
+	
 }
+
+  }, }
 </script>
  
  
@@ -201,7 +150,7 @@
 	 align-items: center;
 	 min-height: 100vh;
 	 font-family: 'Jost', sans-serif;
-	 background: #354F52;
+	 background: #ad7814;
  }
  .main{
 	 width: 350px;
