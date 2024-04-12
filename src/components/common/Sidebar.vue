@@ -70,7 +70,7 @@ export default {
     },
     redirectToEstado() {
       // Redirige a la página de Estado
-      this.$router.push('/PaginaEstado');
+      this.$router.push('/mapa');
       this.closeSidebar();
     },
     redirectToCalendario() {
@@ -176,8 +176,8 @@ a.active, a:hover {
 
 
 .sidebar > a.active, .sidebar > a:hover:nth-child(even) {
-  --accent-color: #dd8016;
-  --gradient-color: #e2e6c2;
+  --accent-color: #e2e6c2;
+  --gradient-color: #dd8016;
   box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
     inset -7px -7px 10px 0px rgba(0, 0, 0, .1),
     3.5px 3.5px 20px 0px rgba(0, 0, 0, .1),

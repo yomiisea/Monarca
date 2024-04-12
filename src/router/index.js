@@ -9,6 +9,7 @@ import PaginaTareas from '@/views/PaginaTareas.vue'
 import PaginaPendientes from '@/views/PaginaPendientes.vue'
 import PaginaCategorias from '@/views/PaginaCategorias.vue'
 import TareaDetalle from '@/views/TareaDetalle.vue'
+import mapa from '@/views/mapa.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,6 +42,11 @@ const router = createRouter({
       path: '/PaginaEstado',
       name: 'PaginaEstado',
       component: PaginaEstado
+    },
+    {
+      path: '/mapa',
+      name: 'mapa',
+      component: mapa
     },
     {
       path: '/PaginaDiario',
