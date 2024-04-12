@@ -12,9 +12,11 @@
     "@fawmi/vue-google-maps": "^0.9.79",
     "axios": "^1.6.7",
     "date-fns": "^3.3.1",
+    "express": "^4.19.2",
     "js-cookie": "^3.0.5",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.10.7",
+    "twilio": "^5.0.3",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },

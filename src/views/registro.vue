@@ -1,54 +1,29 @@
 <template>
     <div class="ayuda">
-      <div class="student__profile">
-         <div class="content__welcome">
-            
-          </div>
-        </div>
-        <button class= button @click="botonsos">SOS</button>
-        <!--prueba -->
-       
-        <div class="abajo">
-          <GMapAutocomplete
-        placeholder="Coloca la Direccion"
-        @place_changed="setPlace"
-        style="width: 90%; max-width: 500px; font-size: medium;background-color: #ffdcc5; color: black"
-    >
-    </GMapAutocomplete>
-    <div class="card2">
-      <h1 class="subtitle">Nombre</h1>
-        <textarea id="description" v-model="descripcion" rows="2" cols="50"></textarea>
+      <!-- Tu otro contenido aquí -->
+      <div class="abajo">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>X de Destino</th>
+              <th>Y de Destino</th>
+              <th>Dirección de Origen</th>
+              <th>Comentarios</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(ubicacion, index) in ubicaciones" :key="index">
+              <td>{{ ubicacion.xdestino }}</td>
+              <td>{{ ubicacion.ydestino }}</td>
+              <td>{{ ubicacion.direccionorigen }}</td>
+              <td>{{ ubicacion.comentario }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    <button class= button2 @click="addubi">Añadir ubicación</button>
-</div>
-
-  <div class="card">
-                
-                <div class="EmpresasDestacadas">
-                  <GMapMap
-    :center="center"
-    :zoom="18"
-   
-    style="width: 300px; height: 800px;padding-left: 80%;"
->
-    <!-- Agregar marcador -->
-    <GMapMarker
-        v-for="(marker, index) in markers"
-        :key="index"
-        :position="marker.position"
-    />
-</GMapMap>
-            </div>
-        </div>
-      
-                
-
-        
-           
-          </div>
-          
+    </div>
+  </template>
   
-</template>
   
 <script>
 
@@ -64,6 +39,7 @@ export default {
     },
     data() {
         return {
+            ubicaciones: [],
           selectedLatitude: null,
       selectedLongitude: null,
       descripcion: '',
@@ -194,7 +170,27 @@ export default {
             });
         } 
     },
+    created() {
+  // Obtener el userId desde window.userid
+  const userId = window.userid;
 
+  // Realizar la solicitud GET para obtener los datos de la API
+  fetch(`https://devel.transoft.bo/monarca/api.php/records/rutas?filter=users_id,eq,${userId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error al obtener las ubicaciones');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Almacenar los datos en la variable ubicaciones
+      this.ubicaciones = data.records;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Manejar el error si la solicitud falla
+    });
+},
 
     
 };
@@ -202,7 +198,24 @@ export default {
 
   
 <style scoped>
-
+.styled-table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+  .styled-table th, .styled-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  .styled-table th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+  }
+  .styled-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
 
 @media screen and (max-width: 1250px) {
 .container__header__page{

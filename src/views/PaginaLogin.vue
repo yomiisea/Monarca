@@ -119,7 +119,7 @@ async loginUser() {
             setTimeout(() => {
                 // location.reload();
             }, 1000);
-			alert("salida");
+			
 			this.$router.push("/home");
         } else {
             // Usuario o contraseña incorrectos

@@ -63,7 +63,7 @@
 </template>
   
 <script>
-
+ import Swal from 'sweetalert2';
 import consejo2 from "@/components/common/consejo2.vue";
 import consejo from "@/components/common/consejo.vue";
 import { useTareasStore } from '@/stores/tareasStore.js';
@@ -149,6 +149,7 @@ export default {
 
         if (response.ok) {
           console.log('Ruta enviada exitosamente');
+          this.$router.push("/home");
           // Aquí puedes realizar alguna acción adicional si lo necesitas
         } else {
           console.error('Error al enviar la ruta:', response.statusText);

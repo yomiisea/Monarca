@@ -9,25 +9,27 @@
   </template>
   
   <script>
+
+
+
   import Swal from 'sweetalert2';
-  import twilio from 'twilio';
-
-const TWILIO_ID = 'AC3676ea6cbaac373808ba4d13125a73e7';
-const TWILIO_SK = 'b8ca1d734df66471e7c9394b9f451fe3';
-
-const client = twilio(TWILIO_ID, TWILIO_SK);
   export default {
     name: 'SOSPage',
     data() {
       return {
-        timeLeft: 30
+        timeLeft: 5,
+        usuario: null,
+      ultimaRuta: null
       };
     },
     mounted() {
       // Iniciar el temporizador al montar el componente
       this.startTimer();
+      this.obtenerUsuario();
+    this.obtenerUltimaRuta();
     },
     methods: {
+       
         cancelAlert() {
         Swal.fire({
         icon: 'info',
@@ -53,38 +55,49 @@ const client = twilio(TWILIO_ID, TWILIO_SK);
             enviarMensaje();
           }
         }, 1000);
+      },
+      obtenerUsuario() {
+  const userId = window.userid;
+  fetch(`https://devel.transoft.bo/monarca/api.php/records/users/${userId}`)
+    .then(response => response.json())
+    .then(data => {
+      // Verificar si se encontró un usuario con el ID especificado
+      if (data && data.length > 0) {
+        // Almacenar el primer usuario encontrado
+        this.usuario = data[0];
+      } else {
+        console.error('No se encontró ningún usuario con el ID especificado.');
       }
+    })
+    .catch(error => {
+      console.error('Error al obtener el usuario:', error);
+    });
+},
+obtenerUltimaRuta() {
+  const userId = window.userid;
+  fetch(`https://devel.transoft.bo/monarca/api.php/records/rutas?filter=users_id,eq,${userId}&order=idruta,desc&rows=1`)
+    .then(response => response.json())
+    .then(data => {
+      // Verificar si se encontró alguna ruta para el usuario
+      if (data && data.length > 0) {
+        // Almacenar la última ruta encontrada
+        this.ultimaRuta = data[0];
+      } else {
+        console.error('No se encontró ninguna ruta para el usuario especificado.');
+      }
+    })
+    .catch(error => {
+      console.error('Error al obtener la última ruta:', error);
+    });
+},
+
     },
     beforeDestroy() {
       // Limpiar el intervalo antes de destruir el componente para evitar fugas de memoria
       clearInterval(this.timerInterval);
     }
   };
-  function enviarMensaje() {
-  // Obtener la ubicación actual del usuario (por ejemplo, utilizando la API de geolocalización del navegador)
-  navigator.geolocation.getCurrentPosition(position => {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-
-    // Crear la URL de Google Maps con las coordenadas de latitud y longitud
-    const direccionGoogleMaps = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-    // Crear el mensaje con la ubicación de Google Maps
-    const mensaje = `Este es mi mensaje con la ubicación actual:\n${direccionGoogleMaps}`;
-
-    // Enviar el mensaje utilizando Twilio
-    client.messages
-      .create({
-        body: mensaje,
-        from: 'whatsapp:+14155238886', // Este es el número de Twilio para enviar mensajes de WhatsApp
-        to: 'whatsapp:+59173515673' // El número de WhatsApp al que deseas enviar el mensaje
-      })
-      .then(message => console.log(message.sid))
-      .catch(error => console.error('Error al enviar el mensaje:', error));
-  }, error => {
-    console.error('Error al obtener la ubicación del usuario:', error);
-  });
-}
+  
   </script>
   
   <style scoped>
